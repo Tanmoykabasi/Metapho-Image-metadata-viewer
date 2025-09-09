@@ -1,0 +1,52 @@
+body {
+    font-family: sans-serif;
+    background-color: #f0f0f0;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+}
+
+h1 {
+    color: #005a9c;
+}
+
+#photo-input {
+    margin: 20px 0;
+    padding: 10px;
+    border: 2px dashed #005a9c;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#metadata-container {
+    margin-top: 20px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    width: 80%;
+    max-width: 800px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+td:first-child {
+    font-weight: bold;
+    color: #005a9c;
+    width: 30%;
+}
