@@ -29,5 +29,3 @@ It’s especially useful for photographers, developers, and digital forensics en
 * **Requests / Geopy (optional)** — For reverse geocoding GPS data
 
 ---
-
-Would you like me to include **a badge section** (e.g., Python version, license, platform) and format it in **GitHub Markdown style with emojis and shields.io badges** for a more professional look?
