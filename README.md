@@ -19,6 +19,9 @@ It’s especially useful for photographers, developers, and digital forensics en
 ✅ Lightweight and fast PyQt5-based GUI
 
 ---
+<img width="1918" height="1133" alt="Metapho scs" src="https://github.com/user-attachments/assets/6f6d5005-a73d-4c5f-8e7a-3ade836cc456" />
+
+
 
 ## 🧠 Technologies Used
 
