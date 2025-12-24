@@ -6,7 +6,7 @@ a = Analysis(
     pathex=[],
     binaries=[],
     datas=[],
-    hiddenimports=['PIL._tkinter_finder', 'geopy.geocoders'],
+    hiddenimports=[],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -35,5 +35,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['C:\\Users\\Tanmoy\\Desktop\\bot - Copy\\icon.ico'],
+    icon=['C:\\Users\\USER\\Desktop\\bot - Copy - Copy\\icon.ico'],
 )
