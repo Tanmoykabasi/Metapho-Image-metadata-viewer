@@ -4,13 +4,11 @@ from PyQt5.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QH
                              QPushButton, QLabel, QFileDialog, QTextBrowser, QScrollArea, 
                              QFrame, QSizePolicy, QMessageBox)
 from PyQt5.QtGui import QPixmap, QImage, QFont
-from PyQt5.QtCore import Qt, QTimer
-import cv2
+from PyQt5.QtCore import Qt, QTimer, QMimeData
 from PIL import Image
 from PIL.ExifTags import TAGS, GPSTAGS
 import pillow_heif
-import numpy as np
-from PyQt5.QtGui import QIcon
+from PyQt5.QtGui import QIcon, QDragEnterEvent, QDropEvent
 
 class MetadataViewer(QMainWindow):
     def __init__(self):
@@ -18,11 +16,7 @@ class MetadataViewer(QMainWindow):
         self.setWindowTitle("Metapho: Photo Metadata Viewer")
         self.setGeometry(100, 100, 1000, 700)
         
-        self.setWindowIcon(QIcon(r"C:\Users\Tanmoy\Desktop\bot\icon\icon26.png"))
-        # Camera variables
-        self.capture_window = None
-        self.cap = None
-        self.timer = None
+        self.setWindowIcon(QIcon(r"C:\Users\USER\Desktop\bot - Copy - Copy\icon.ico"))
         
         # Set application-wide styles
         self.setStyleSheet("""
@@ -62,11 +56,8 @@ class MetadataViewer(QMainWindow):
         # Top panel with buttons
         button_layout = QHBoxLayout()
         self.upload_btn = QPushButton("Upload Photo")
-        self.capture_btn = QPushButton("Capture Photo")
         self.upload_btn.clicked.connect(self.upload_photo)
-        self.capture_btn.clicked.connect(self.show_camera_window)
         button_layout.addWidget(self.upload_btn)
-        button_layout.addWidget(self.capture_btn)
         button_layout.addStretch()
         
         # Content area
@@ -87,6 +78,7 @@ class MetadataViewer(QMainWindow):
         self.image_label.setMinimumSize(400, 300)
         self.image_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         self.image_label.setStyleSheet("border: none; background-color: #F8F9FA;")
+        self.image_label.setAcceptDrops(True)
         
         image_layout.addWidget(self.image_label)
         left_panel.addWidget(image_frame)
@@ -130,8 +122,25 @@ class MetadataViewer(QMainWindow):
         main_layout.addLayout(button_layout)
         main_layout.addLayout(content_layout)
         
+        # Footer
+        footer = QLabel("Created by Tanmoy Kabasi")
+        footer.setAlignment(Qt.AlignCenter)
+        footer.setStyleSheet("color: rgba(128, 128, 128, 204); font-size: 10px; padding: 10px;")
+        main_layout.addWidget(footer)
+        
         # Initialize HEIF support
         pillow_heif.register_heif_opener()
+
+    def dragEnterEvent(self, event: QDragEnterEvent):
+        if event.mimeData().hasUrls():
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event: QDropEvent):
+        files = [u.toLocalFile() for u in event.mimeData().urls()]
+        if files and files[0].lower().endswith(('.png', '.jpg', '.jpeg', '.tiff', '.tif', '.heic', '.heif')):
+            self.process_image(files[0])
 
     def upload_photo(self):
         file_path, _ = QFileDialog.getOpenFileName(
@@ -140,78 +149,6 @@ class MetadataViewer(QMainWindow):
         )
         if file_path:
             self.process_image(file_path)
-
-    def show_camera_window(self):
-        # Create camera window
-        self.capture_window = QMainWindow(self)
-        self.capture_window.setWindowTitle("Camera Capture")
-        self.capture_window.setGeometry(200, 200, 800, 600)
-        
-        central_widget = QWidget()
-        self.capture_window.setCentralWidget(central_widget)
-        layout = QVBoxLayout(central_widget)
-        
-        # Video display label
-        self.camera_label = QLabel()
-        self.camera_label.setAlignment(Qt.AlignCenter)
-        self.camera_label.setStyleSheet("background-color: black;")
-        layout.addWidget(self.camera_label)
-        
-        # Capture button
-        capture_btn = QPushButton("Take Photo")
-        capture_btn.clicked.connect(self.capture_photo)
-        layout.addWidget(capture_btn)
-        
-        # Start camera
-        self.cap = cv2.VideoCapture(0)
-        if not self.cap.isOpened():
-            QMessageBox.critical(self, "Camera Error", "Could not access camera")
-            return
-            
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.update_camera_frame)
-        self.timer.start(30)  # Update every 30 ms
-        
-        self.capture_window.show()
-
-    def update_camera_frame(self):
-        ret, frame = self.cap.read()
-        if ret:
-            # Convert to RGB (OpenCV uses BGR)
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            h, w, ch = rgb_frame.shape
-            bytes_per_line = ch * w
-            qt_image = QImage(rgb_frame.data, w, h, bytes_per_line, QImage.Format_RGB888)
-            pixmap = QPixmap.fromImage(qt_image)
-            self.camera_label.setPixmap(pixmap.scaled(
-                self.camera_label.size(),
-                Qt.KeepAspectRatio,
-                Qt.SmoothTransformation
-            ))
-
-    def capture_photo(self):
-        ret, frame = self.cap.read()
-        if ret:
-            # Save captured image to temporary file
-            temp_path = os.path.join(os.getcwd(), "captured_photo.jpg")
-            cv2.imwrite(temp_path, frame)
-            
-            # Stop camera and close window
-            self.timer.stop()
-            self.cap.release()
-            self.capture_window.close()
-            
-            # Process captured image
-            self.process_image(temp_path)
-            
-            # Clean up temporary file after processing
-            QTimer.singleShot(1000, lambda: self.remove_temp_file(temp_path))
-
-    def remove_temp_file(self, path):
-        try:
-            os.remove(path)
-        except:
-            pass
 
     def process_image(self, file_path):
         try:
@@ -322,7 +259,7 @@ class MetadataViewer(QMainWindow):
             try:
                 from iptcinfo3 import IPTCInfo
                 iptc_info = IPTCInfo(file_path)
-                if len(iptc_info) > 0:
+                if iptc_info is not None and len(iptc_info) > 0:
                     metadata_text += "<h3>IPTC Data</h3><ul>"
                     for key in iptc_info:
                         value = iptc_info[key]
@@ -410,11 +347,6 @@ class MetadataViewer(QMainWindow):
         return decimal
 
     def closeEvent(self, event):
-        # Clean up camera resources if needed
-        if self.cap and self.cap.isOpened():
-            self.cap.release()
-        if self.timer and self.timer.isActive():
-            self.timer.stop()
         event.accept()
 
 if __name__ == "__main__":
