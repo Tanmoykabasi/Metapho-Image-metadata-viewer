@@ -19,6 +19,7 @@ It’s especially useful for photographers, developers, and digital forensics en
 
 ---
 
+<img width="1919" height="1134" alt="Screenshot 2025-12-21 142844" src="https://github.com/user-attachments/assets/be70516d-c215-4b88-90fc-85e841374829" />
 
 
 
