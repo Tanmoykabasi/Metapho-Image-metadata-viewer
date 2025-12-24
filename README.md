@@ -1,7 +1,3 @@
-Here’s a clean and professional **GitHub README** for your project **Metapho – Image Metadata Viewer** 👇
-
----
-
 # 🖼️ Metapho: Image Metadata Viewer
 
 **Metapho** is a simple and intuitive desktop application built with **Python (PyQt5)** that allows you to **view detailed metadata (EXIF, IPTC, and File Info)** of any image.
@@ -12,10 +8,13 @@ It’s especially useful for photographers, developers, and digital forensics en
 ## 🚀 Features
 
 ✅ Upload and view image metadata easily
-✅ Capture photo directly from camera (if available)
+
 ✅ Displays **EXIF**, **IPTC**, and **File Information**
-✅ Shows **GPS coordinates**, parsed **address**, and direct **Google Maps link**
+
+✅ Shows **GPS coordinates**, parsed **address**
+
 ✅ Supports **JPEG, PNG, and common image formats**
+
 ✅ Lightweight and fast PyQt5-based GUI
 
 ---
@@ -29,6 +28,6 @@ It’s especially useful for photographers, developers, and digital forensics en
 * **PyQt5** — For GUI
 * **Pillow (PIL)** — For image handling
 * **ExifRead** — For extracting metadata
-* **Requests / Geopy (optional)** — For reverse geocoding GPS data
+* **Requests / Geopy** (For reverse geocoding GPS data)
 
 ---
